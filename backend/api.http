@@ -1,0 +1,10 @@
+### Health Check
+GET http://localhost:8000/health
+
+### Ask AI
+POST http://localhost:8000/ai
+Content-Type: application/json
+
+{
+    "question": "What is the capital of France?"
+}
