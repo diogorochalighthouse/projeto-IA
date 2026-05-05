@@ -1,8 +1,9 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    APP_NAME: str
-    ENV: str
+    APP_NAME: str = "DocMind"
+    ENV: str = "dev"
+    OPENAI_API_KEY: str
 
     class Config:
         env_file = ".env"
