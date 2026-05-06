@@ -1,8 +1,11 @@
 from fastapi import FastAPI
-from src.api.routes import health, ai, upload
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.api.error_handlers import register_exception_handlers
+from src.api.routes import ai, health, upload
+
 app = FastAPI()
+register_exception_handlers(app)
 
 app.include_router(health.router)
 app.include_router(ai.router)

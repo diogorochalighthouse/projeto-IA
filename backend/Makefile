@@ -1,4 +1,20 @@
-.PHONY: install run worker
+.PHONY: format lint fix test check
+
+format:
+	uv run black .
+lint:
+	uv run ruff check .
+fix:
+	uv run ruff check . --fix
+	uv run black .
+
+test:
+	PYTHONPATH=. uv run pytest -q
+
+check:
+	uv run ruff check .
+	uv run black --check .
+	PYTHONPATH=. uv run pytest -q
 
 install:
 	uv sync
