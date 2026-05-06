@@ -22,8 +22,6 @@ async def upload(
 ):
     content = await file.read()
     text = extractor.extract(content)
-    result = ingest_document_text(
-        IngestDocumentCommand(text=text), embeddings, vector_store
-    )
+    result = ingest_document_text(IngestDocumentCommand(text=text), embeddings, vector_store)
 
     return {"status": "document indexed", "chunks_indexed": result.chunks_indexed}

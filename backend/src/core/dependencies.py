@@ -12,6 +12,9 @@ from src.infrastructure.adapters.openai_embeddings_adapter import (
 from src.infrastructure.adapters.pdf_text_extractor import (
     PdfTextExtractorAdapter,
 )
+from src.infrastructure.gateways.postgres_message_history import (
+    PostgresMessageHistoryGateway,
+)
 
 
 def get_settings():
@@ -39,3 +42,8 @@ def get_vector_store():
 @lru_cache
 def get_pdf_text_extractor():
     return PdfTextExtractorAdapter()
+
+
+@lru_cache
+def get_message_history():
+    return PostgresMessageHistoryGateway(settings.DATABASE_URL)

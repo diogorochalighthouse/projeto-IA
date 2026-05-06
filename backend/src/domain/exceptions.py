@@ -8,3 +8,7 @@ class InvalidDocumentError(DomainError):
 
 class MissingConfigurationError(DomainError):
     """Raised when required runtime configuration is missing."""
+
+
+class ServiceUnavailableError(DomainError):
+    """Raised when an external dependency is unavailable."""

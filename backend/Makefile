@@ -1,4 +1,4 @@
-.PHONY: format lint fix test check
+.PHONY: format lint fix test check db-up db-down db-logs
 
 format:
 	uv run black .
@@ -24,3 +24,12 @@ run:
 
 worker:
 	uv run celery -A src.workers.celery_app worker --loglevel=info
+
+db-up:
+	docker compose up -d postgres
+
+db-down:
+	docker compose down
+
+db-logs:
+	docker compose logs -f postgres

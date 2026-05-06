@@ -22,9 +22,6 @@ def ask(
     vector_store=Depends(get_vector_store),
 ):
     result = answer_question_with_rag(
-        AnswerQuestionCommand(question=data.question),
-        llm,
-        embeddings,
-        vector_store
+        AnswerQuestionCommand(question=data.question), llm, embeddings, vector_store
     )
     return {"response": result.response}

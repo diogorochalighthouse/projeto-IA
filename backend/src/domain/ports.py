@@ -1,5 +1,7 @@
 from typing import Protocol
 
+from src.domain.message import Message
+
 
 class TextExtractorPort(Protocol):
     def extract(self, file_bytes: bytes) -> str: ...
@@ -19,3 +21,11 @@ class VectorStorePort(Protocol):
 
 class LLMPort(Protocol):
     def invoke(self, prompt: str): ...
+
+
+class MessageHistoryPort(Protocol):
+    def add(self, message: Message) -> None: ...
+
+    def list(self) -> list[Message]: ...
+
+    def clear(self) -> None: ...

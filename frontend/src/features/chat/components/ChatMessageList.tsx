@@ -1,3 +1,5 @@
+import { Paper, ScrollArea, Stack, Text } from '@mantine/core'
+
 import type { ChatMessage } from '@/types/chat'
 
 type ChatMessageListProps = {
@@ -7,15 +9,40 @@ type ChatMessageListProps = {
 
 export function ChatMessageList({ messages, loading }: ChatMessageListProps) {
   return (
-    <div className="flex-1 overflow-y-auto border p-4 mb-4">
+    <Paper
+      withBorder
+      p="md"
+      radius="md"
+      style={{
+        height: '100%',
+        borderColor: '#27272a',
+        backgroundColor: 'rgba(24, 24, 27, 0.7)',
+      }}
+    >
+      <ScrollArea h="100%" className="custom-scrollbar" type="hover" scrollbarSize={8}>
+        <Stack gap="sm">
       {messages.map((message, index) => (
-        <div key={`${message.role}-${index}`} className="mb-2">
-          <strong>{message.role === 'user' ? 'Você' : 'IA'}:</strong>
-          <p>{message.content}</p>
-        </div>
+          <Paper
+            key={`${message.role}-${index}`}
+            p="md"
+            radius="xl"
+            ml={message.role === 'user' ? 'auto' : 0}
+            mr={message.role === 'assistant' ? 'auto' : 0}
+            maw="90%"
+            bg={message.role === 'user' ? '#f4f4f5' : '#27272a'}
+            c={message.role === 'user' ? '#18181b' : '#f4f4f5'}
+          >
+            <Text size="sm">{message.content}</Text>
+          </Paper>
       ))}
 
-      {loading && <p>IA está pensando...</p>}
-    </div>
+          {loading && (
+            <Text size="sm" c="dimmed">
+              IA esta pensando...
+            </Text>
+          )}
+        </Stack>
+      </ScrollArea>
+    </Paper>
   )
 }

@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from src.core.dependencies import (
     get_embeddings_adapter,
     get_llm,
+    get_message_history,
     get_pdf_text_extractor,
     get_vector_store,
 )
@@ -51,6 +52,27 @@ class BrokenPdfExtractor:
     def extract(self, file_bytes: bytes) -> str:
         _ = file_bytes
         raise InvalidDocumentError("PDF invalido ou corrompido.")
+
+
+class FakeMessage:
+    def __init__(self, role: str, content: str, created_at: str):
+        self.role = role
+        self.content = content
+        self.created_at = created_at
+
+
+class FakeMessageHistory:
+    def __init__(self):
+        self.items: list[FakeMessage] = []
+
+    def add(self, message):
+        self.items.append(FakeMessage(message.role, message.content, "2026-01-01T00:00:00Z"))
+
+    def list(self):
+        return self.items
+
+    def clear(self):
+        self.items = []
 
 
 def test_health_route_returns_ok():
@@ -103,4 +125,22 @@ def test_upload_route_returns_400_for_invalid_document():
 
     assert response.status_code == 400
     assert "detail" in response.json()
+    app.dependency_overrides.clear()
+
+
+def test_messages_routes_create_list_and_clear():
+    fake_history = FakeMessageHistory()
+    app.dependency_overrides[get_message_history] = lambda: fake_history
+    client = TestClient(app)
+
+    create = client.post("/messages/", json={"role": "user", "content": "oi"})
+    assert create.status_code == 201
+    assert create.json()["content"] == "oi"
+
+    read = client.get("/messages/")
+    assert read.status_code == 200
+    assert len(read.json()) == 1
+
+    clear = client.delete("/messages/")
+    assert clear.status_code == 204
     app.dependency_overrides.clear()
