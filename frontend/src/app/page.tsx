@@ -15,13 +15,14 @@ export default function Home() {
     activeConversationId,
     messages,
     input,
+    selectedFile,
     loading,
     setInput,
+    setSelectedFile,
     createConversation,
     selectConversation,
     deleteConversation,
     sendMessage,
-    uploadFile,
   } = useChat()
   const apiStatus = useApiStatus()
 
@@ -61,10 +62,11 @@ export default function Home() {
           </Box>
           <ChatComposer
             input={input}
+            selectedFile={selectedFile}
             loading={loading}
             onInputChange={setInput}
+            onFileChange={setSelectedFile}
             onSendMessage={sendMessage}
-            onUploadFile={uploadFile}
           />
         </Box>
       </AppShell.Main>

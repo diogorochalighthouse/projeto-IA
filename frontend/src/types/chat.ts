@@ -3,6 +3,11 @@ export type MessageRole = 'user' | 'assistant'
 export type ChatMessage = {
   role: MessageRole
   content: string
+  attachment?: {
+    name: string
+    mimeType: string
+    kind: 'pdf' | 'image' | 'file'
+  }
 }
 
 export type ChatConversation = {

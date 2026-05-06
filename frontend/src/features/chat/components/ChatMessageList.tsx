@@ -1,4 +1,5 @@
-import { Paper, ScrollArea, Stack, Text } from '@mantine/core'
+import { Group, Paper, ScrollArea, Stack, Text, ThemeIcon } from '@mantine/core'
+import { File, FileImage, FileText } from 'lucide-react'
 
 import type { ChatMessage } from '@/types/chat'
 
@@ -21,7 +22,7 @@ export function ChatMessageList({ messages, loading }: ChatMessageListProps) {
     >
       <ScrollArea h="100%" className="custom-scrollbar" type="hover" scrollbarSize={8}>
         <Stack gap="sm">
-      {messages.map((message, index) => (
+          {messages.map((message, index) => (
           <Paper
             key={`${message.role}-${index}`}
             p="md"
@@ -32,9 +33,53 @@ export function ChatMessageList({ messages, loading }: ChatMessageListProps) {
             bg={message.role === 'user' ? '#f4f4f5' : '#27272a'}
             c={message.role === 'user' ? '#18181b' : '#f4f4f5'}
           >
-            <Text size="sm">{message.content}</Text>
+              {message.attachment && (
+                <Paper
+                  p="xs"
+                  radius="md"
+                  mb={message.content ? 'xs' : 0}
+                  bg={
+                    message.attachment.kind === 'pdf'
+                      ? '#ffe3e3'
+                      : message.attachment.kind === 'image'
+                        ? '#dbeafe'
+                        : '#e4e4e7'
+                  }
+                >
+                  <Group gap="xs" wrap="nowrap">
+                    <ThemeIcon
+                      size="sm"
+                      variant="filled"
+                      color={
+                        message.attachment.kind === 'pdf'
+                          ? 'red'
+                          : message.attachment.kind === 'image'
+                            ? 'blue'
+                            : 'gray'
+                      }
+                    >
+                      {message.attachment.kind === 'pdf' ? (
+                        <FileText size={14} />
+                      ) : message.attachment.kind === 'image' ? (
+                        <FileImage size={14} />
+                      ) : (
+                        <File size={14} />
+                      )}
+                    </ThemeIcon>
+                    <Text
+                      size="xs"
+                      fw={600}
+                      c={message.role === 'user' ? '#18181b' : '#1f2937'}
+                      truncate
+                    >
+                      {message.attachment.name}
+                    </Text>
+                  </Group>
+                </Paper>
+              )}
+              {message.content && <Text size="sm">{message.content}</Text>}
           </Paper>
-      ))}
+          ))}
 
           {loading && (
             <Text size="sm" c="dimmed">

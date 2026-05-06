@@ -13,6 +13,18 @@ function sortByNewest(conversations: ChatConversation[]) {
   )
 }
 
+function getFileKind(file: File): 'pdf' | 'image' | 'file' {
+  if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+    return 'pdf'
+  }
+
+  if (file.type.startsWith('image/')) {
+    return 'image'
+  }
+
+  return 'file'
+}
+
 function createConversation(): ChatConversation {
   return {
     id: crypto.randomUUID(),
@@ -27,6 +39,7 @@ export function useChat() {
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null)
   const [hasHydrated, setHasHydrated] = useState(false)
   const [input, setInput] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -76,10 +89,16 @@ export function useChat() {
 
           const nextMessages = update(conversation.messages)
           const firstUserMessage = nextMessages.find((msg) => msg.role === 'user')
+          const fallbackTitleFromAttachment = firstUserMessage?.attachment?.name
+            ?.replace(/\.[^/.]+$/, '')
+            .slice(0, 40)
 
           return {
             ...conversation,
-            title: firstUserMessage?.content.slice(0, 40) || 'Nova conversa',
+            title:
+              firstUserMessage?.content.slice(0, 40) ||
+              fallbackTitleFromAttachment ||
+              'Nova conversa',
             updatedAt: new Date().toISOString(),
             messages: nextMessages,
           }
@@ -102,6 +121,7 @@ export function useChat() {
     setConversations((previous) => sortByNewest([newConversation, ...previous]))
     setActiveConversationId(newConversation.id)
     setInput('')
+    setSelectedFile(null)
   }
 
   function selectConversation(conversationId: string) {
@@ -121,21 +141,38 @@ export function useChat() {
   }
 
   async function sendMessage() {
-    if (!input.trim()) return
+    const question = input.trim()
+    if (!question && !selectedFile) return
 
     const conversationId = ensureActiveConversationId()
-    const question = input
-    const userMessage: ChatMessage = { role: 'user', content: question }
+
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: question,
+      attachment: selectedFile
+        ? {
+            name: selectedFile.name,
+            mimeType: selectedFile.type || 'application/octet-stream',
+            kind: getFileKind(selectedFile),
+          }
+        : undefined,
+    }
     applyConversationUpdate(conversationId, (previous) => [...previous, userMessage])
     setInput('')
     setLoading(true)
 
     try {
-      const answer = await askAiAction(question)
-      applyConversationUpdate(conversationId, (previous) => [
-        ...previous,
-        { role: 'assistant', content: answer },
-      ])
+      if (selectedFile) {
+        await uploadDocumentAction(selectedFile)
+      }
+
+      if (question) {
+        const answer = await askAiAction(question)
+        applyConversationUpdate(conversationId, (previous) => [
+          ...previous,
+          { role: 'assistant', content: answer },
+        ])
+      }
     } catch (error) {
       console.error(error)
       applyConversationUpdate(conversationId, (previous) => [
@@ -148,29 +185,7 @@ export function useChat() {
       ])
     } finally {
       setLoading(false)
-    }
-  }
-
-  async function uploadFile(file: File | null) {
-    if (!file) return
-    const conversationId = ensureActiveConversationId()
-
-    try {
-      await uploadDocumentAction(file)
-      applyConversationUpdate(conversationId, (previous) => [
-        ...previous,
-        { role: 'assistant', content: 'Arquivo enviado com sucesso.' },
-      ])
-    } catch (error) {
-      console.error(error)
-      applyConversationUpdate(conversationId, (previous) => [
-        ...previous,
-        {
-          role: 'assistant',
-          content:
-            'Nao consegui enviar o arquivo. Verifique se a API local esta acessivel.',
-        },
-      ])
+      setSelectedFile(null)
     }
   }
 
@@ -179,12 +194,13 @@ export function useChat() {
     activeConversationId,
     messages,
     input,
+    selectedFile,
     loading,
     setInput,
+    setSelectedFile,
     createConversation: createNewConversation,
     selectConversation,
     deleteConversation,
     sendMessage,
-    uploadFile,
   }
 }
