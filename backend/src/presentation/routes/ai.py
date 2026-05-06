@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
 
-from src.api.schemas.ai_schema import AIRequest
 from src.application.use_cases.answer_question import (
     AnswerQuestionCommand,
     answer_question_with_rag,
@@ -10,6 +9,7 @@ from src.core.dependencies import (
     get_llm,
     get_vector_store,
 )
+from src.presentation.schemas.ai_schema import AIRequest
 
 router = APIRouter(prefix="/ai")
 

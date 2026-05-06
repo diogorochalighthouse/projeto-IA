@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, status
 
-from src.api.schemas.message_schema import MessageCreateRequest, MessageResponse
 from src.application.use_cases.message_history import (
     CreateMessageCommand,
     clear_messages,
@@ -8,6 +7,7 @@ from src.application.use_cases.message_history import (
     list_messages,
 )
 from src.core.dependencies import get_message_history
+from src.presentation.schemas.message_schema import MessageCreateRequest, MessageResponse
 
 router = APIRouter(prefix="/messages", tags=["messages"])
 

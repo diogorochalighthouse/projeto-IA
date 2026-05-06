@@ -32,6 +32,11 @@ export function ChatComposer({
         placeholder="Digite sua pergunta..."
         style={{ flex: 1 }}
         disabled={loading}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            onSendMessage()
+          }
+        }}
       />
 
       <Button onClick={onSendMessage} variant="filled" loading={loading}>

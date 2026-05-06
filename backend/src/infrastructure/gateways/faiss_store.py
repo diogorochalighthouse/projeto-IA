@@ -18,5 +18,4 @@ class VectorStore:
 
         query_vector = np.array([query_embedding]).astype("float32")
         _, indices = self.index.search(query_vector, min(k, len(self.documents)))
-
         return [self.documents[i] for i in indices[0] if i != -1]

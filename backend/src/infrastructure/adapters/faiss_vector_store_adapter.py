@@ -1,4 +1,4 @@
-from src.vectorstore.faiss_store import VectorStore
+from src.infrastructure.gateways.faiss_store import VectorStore
 
 
 class FaissVectorStoreAdapter:

@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.api.error_handlers import register_exception_handlers
-from src.api.routes import ai, health, messages, upload
+from src.presentation.errors.error_handlers import register_exception_handlers
+from src.presentation.routes import ai, health, messages, upload
 
 app = FastAPI()
 register_exception_handlers(app)
