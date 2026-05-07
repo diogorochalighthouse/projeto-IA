@@ -8,3 +8,11 @@ Content-Type: application/json
 {
     "question": "What is the capital of France?"
 }
+
+### Ingest Document
+POST http://localhost:8000/ingest
+Content-Type: application/json
+
+{
+    "file": "test.pdf"
+}
