@@ -29,7 +29,7 @@ class PostgresMessageHistoryGateway:
 
     def add(self, message: Message) -> None:
         stmt = text(
-            "INSERT INTO messages (role, content, created_at) " "VALUES (:role, :content, NOW())"
+            "INSERT INTO messages (role, content, created_at) VALUES (:role, :content, NOW())"
         )
         try:
             with self._engine.begin() as conn:
@@ -39,7 +39,7 @@ class PostgresMessageHistoryGateway:
 
     def list(self) -> list[Message]:
         query = text(
-            "SELECT role, content, created_at FROM messages " "ORDER BY created_at ASC, id ASC"
+            "SELECT role, content, created_at FROM messages ORDER BY created_at ASC, id ASC"
         )
         try:
             with self._engine.connect() as conn:

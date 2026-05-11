@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.presentation.errors.error_handlers import register_exception_handlers
-from src.presentation.routes import ai, health, messages, upload
+from src.presentation.routes import ai, auth, health, messages, upload
 
 app = FastAPI()
 register_exception_handlers(app)
 
 app.include_router(health.router)
+app.include_router(auth.router)
 app.include_router(ai.router)
 app.include_router(upload.router)
 app.include_router(messages.router)

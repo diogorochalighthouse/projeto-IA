@@ -128,6 +128,39 @@ def test_upload_route_returns_400_for_invalid_document():
     app.dependency_overrides.clear()
 
 
+def test_auth_register_login_and_duplicate_email():
+    client = TestClient(app)
+
+    reg = client.post(
+        "/auth/register",
+        json={"email": "user@example.com", "password": "senha1234"},
+    )
+    assert reg.status_code == 201
+    assert reg.json()["email"] == "user@example.com"
+    assert "id" in reg.json()
+
+    dup = client.post(
+        "/auth/register",
+        json={"email": "user@example.com", "password": "outrasenha12"},
+    )
+    assert dup.status_code == 409
+
+    bad_login = client.post(
+        "/auth/login",
+        json={"email": "user@example.com", "password": "errada"},
+    )
+    assert bad_login.status_code == 401
+
+    ok = client.post(
+        "/auth/login",
+        json={"email": "user@example.com", "password": "senha1234"},
+    )
+    assert ok.status_code == 200
+    body = ok.json()
+    assert body["token_type"] == "bearer"
+    assert "access_token" in body
+
+
 def test_messages_routes_create_list_and_clear():
     fake_history = FakeMessageHistory()
     app.dependency_overrides[get_message_history] = lambda: fake_history

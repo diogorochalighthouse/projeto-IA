@@ -30,6 +30,9 @@ htmlcov/
 *.swp
 *.swo
 
+# Local Alembic scratch DB
+_alembic_gen.sqlite
+
 # Environment and secrets
 .env
 .env.*
