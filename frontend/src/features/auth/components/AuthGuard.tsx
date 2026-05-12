@@ -1,9 +1,9 @@
-'use client'
+"use client"
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
-import { useAuth } from '@/features/auth/context'
+import { useAuth } from "@/features/auth/context"
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { session, ready } = useAuth()
@@ -12,7 +12,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!ready) return
     if (!session) {
-      router.replace('/login')
+      router.replace("/login")
     }
   }, [ready, session, router])
 

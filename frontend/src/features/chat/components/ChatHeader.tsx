@@ -1,62 +1,37 @@
-'use client'
+"use client"
 
-import { ActionIcon, Avatar, Group, Menu, Text } from '@mantine/core'
-import { LogOut, MoreVertical, User } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { motion } from "framer-motion"
+import { PanelLeft } from "lucide-react"
 
-import { displayNameFromEmail, useAuth } from '@/features/auth/context'
-import { ApiStatusBadge } from '@/features/system/components/ApiStatusBadge'
-import type { ApiStatus } from '@/features/system/hooks/useApiStatus'
+import { Button } from "@/components/ui/button"
 
 type ChatHeaderProps = {
-  apiStatus: ApiStatus
+  onOpenSidebar?: () => void
 }
 
-export function ChatHeader({ apiStatus }: ChatHeaderProps) {
-  const { session, logout } = useAuth()
-  const router = useRouter()
-
-  function handleLogout() {
-    logout()
-    router.push('/login')
-    router.refresh()
-  }
-
-  const label = session ? displayNameFromEmail(session.email) : ''
-
+export function ChatHeader({ onOpenSidebar }: ChatHeaderProps) {
   return (
-    <Group justify="space-between" mb="md" wrap="nowrap">
-      <Text fw={700} size="xl" c="gray.0">
-        DocMind AI
-      </Text>
-      <Group gap="sm" wrap="nowrap">
-        {session && (
-          <Group gap={6} wrap="nowrap" visibleFrom="sm">
-            <Avatar size="sm" radius="xl" color="gray.6">
-              <User size={14} />
-            </Avatar>
-            <Text size="sm" c="dimmed" truncate maw={200} title={session.email}>
-              {label}
-            </Text>
-          </Group>
-        )}
-        <ApiStatusBadge status={apiStatus} />
-        {session && (
-          <Menu position="bottom-end" shadow="md" width={220}>
-            <Menu.Target>
-              <ActionIcon variant="subtle" color="gray" size="lg" aria-label="Menu da conta">
-                <MoreVertical size={18} />
-              </ActionIcon>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label tt="none">{session.email}</Menu.Label>
-              <Menu.Item leftSection={<LogOut size={14} />} onClick={handleLogout}>
-                Sair
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        )}
-      </Group>
-    </Group>
+    <motion.header
+      layout
+      className="flex shrink-0 items-center gap-2 border-b border-white/5 px-3 py-2.5 md:px-4"
+      transition={{ duration: 0.2 }}
+    >
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="h-9 w-9 text-zinc-400 hover:bg-white/5 hover:text-zinc-100 md:hidden"
+        aria-label="Abrir menu"
+        onClick={onOpenSidebar}
+      >
+        <PanelLeft className="h-5 w-5" />
+      </Button>
+      <div className="flex min-w-0 items-center gap-1">
+        <span className="truncate text-sm font-semibold text-zinc-100">DocMind</span>
+        <span className="text-zinc-600" aria-hidden>
+          ▾
+        </span>
+      </div>
+    </motion.header>
   )
 }

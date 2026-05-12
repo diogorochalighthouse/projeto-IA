@@ -1,12 +1,14 @@
-export type MessageRole = 'user' | 'assistant'
+export type MessageRole = "user" | "assistant"
 
 export type ChatMessage = {
+  conversationId?: string
+  createdAt?: string
   role: MessageRole
   content: string
   attachment?: {
     name: string
     mimeType: string
-    kind: 'pdf' | 'image' | 'file'
+    kind: "pdf" | "image" | "file"
   }
 }
 

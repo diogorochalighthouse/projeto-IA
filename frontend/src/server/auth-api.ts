@@ -1,7 +1,9 @@
-import 'server-only'
+import "server-only"
+
+import { mapFetchErrorToUserMessage, mapHttpStatusToUserMessage } from "@/lib/api-error-message"
 
 const BACKEND_API_URL =
-  process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
+  process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001"
 
 export type LoginResult = {
   access_token: string
@@ -9,52 +11,79 @@ export type LoginResult = {
 }
 
 export type RegisterResult = {
-  id: number
+  id: string
   email: string
 }
 
-export async function requestLogin(email: string, password: string): Promise<LoginResult> {
-  const response = await fetch(`${BACKEND_API_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
-    cache: 'no-store',
-  })
+function parseApiDetail(detail: unknown): string | null {
+  if (typeof detail === "string") return detail
+  if (Array.isArray(detail)) {
+    return (
+      detail
+        .map((d) =>
+          typeof d === "object" && d && "msg" in d ? String((d as { msg: string }).msg) : "",
+        )
+        .join(" ")
+        .trim() || null
+    )
+  }
+  return null
+}
 
-  if (!response.ok) {
-    const err = (await response.json().catch(() => null)) as { detail?: unknown } | null
-    const detail = err?.detail
-    const message =
-      typeof detail === 'string'
-        ? detail
-        : Array.isArray(detail)
-          ? detail.map((d) => (typeof d === 'object' && d && 'msg' in d ? String((d as { msg: string }).msg) : '')).join(' ')
-          : 'Falha ao entrar.'
-    throw new Error(message || 'Falha ao entrar.')
+export async function requestLogin(email: string, password: string): Promise<LoginResult> {
+  let response: Response
+  try {
+    response = await fetch(`${BACKEND_API_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      cache: "no-store",
+    })
+  } catch (error: unknown) {
+    throw new Error(mapFetchErrorToUserMessage(error))
   }
 
-  return (await response.json()) as LoginResult
+  if (!response.ok) {
+    const fallback = mapHttpStatusToUserMessage(response.status, "Falha ao entrar.")
+    const err = (await response.json().catch(() => null)) as {
+      detail?: unknown
+    } | null
+    const fromApi = parseApiDetail(err?.detail)
+    throw new Error(fromApi || fallback)
+  }
+
+  try {
+    return (await response.json()) as LoginResult
+  } catch {
+    throw new Error("Resposta inválida do servidor ao iniciar sessão.")
+  }
 }
 
 export async function requestRegister(email: string, password: string): Promise<RegisterResult> {
-  const response = await fetch(`${BACKEND_API_URL}/auth/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
-    cache: 'no-store',
-  })
-
-  if (!response.ok) {
-    const err = (await response.json().catch(() => null)) as { detail?: unknown } | null
-    const detail = err?.detail
-    const message =
-      typeof detail === 'string'
-        ? detail
-        : Array.isArray(detail)
-          ? detail.map((d) => (typeof d === 'object' && d && 'msg' in d ? String((d as { msg: string }).msg) : '')).join(' ')
-          : 'Falha ao cadastrar.'
-    throw new Error(message || 'Falha ao cadastrar.')
+  let response: Response
+  try {
+    response = await fetch(`${BACKEND_API_URL}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      cache: "no-store",
+    })
+  } catch (error: unknown) {
+    throw new Error(mapFetchErrorToUserMessage(error))
   }
 
-  return (await response.json()) as RegisterResult
+  if (!response.ok) {
+    const fallback = mapHttpStatusToUserMessage(response.status, "Falha ao cadastrar.")
+    const err = (await response.json().catch(() => null)) as {
+      detail?: unknown
+    } | null
+    const fromApi = parseApiDetail(err?.detail)
+    throw new Error(fromApi || fallback)
+  }
+
+  try {
+    return (await response.json()) as RegisterResult
+  } catch {
+    throw new Error("Resposta inválida do servidor ao cadastrar.")
+  }
 }

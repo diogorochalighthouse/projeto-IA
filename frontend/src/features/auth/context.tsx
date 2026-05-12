@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 
-import type { AuthSession } from '@/features/auth/types'
+import type { AuthSession } from "@/features/auth/types"
 
-const STORAGE_KEY = 'docmind:auth'
+const STORAGE_KEY = "docmind:auth"
 
 type AuthContextValue = {
   session: AuthSession | null
@@ -16,7 +16,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 function readStoredSession(): AuthSession | null {
-  if (typeof window === 'undefined') return null
+  if (typeof window === "undefined") return null
   const raw = window.localStorage.getItem(STORAGE_KEY)
   if (!raw) return null
   try {
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(
     () => ({ session, ready, setSession, logout }),
-    [session, ready, setSession, logout]
+    [session, ready, setSession, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
@@ -64,12 +64,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const ctx = useContext(AuthContext)
   if (!ctx) {
-    throw new Error('useAuth deve ser usado dentro de AuthProvider')
+    throw new Error("useAuth deve ser usado dentro de AuthProvider")
   }
   return ctx
 }
 
 export function displayNameFromEmail(email: string) {
-  const local = email.split('@')[0]
+  const local = email.split("@")[0]
   return local.length > 0 ? local : email
 }

@@ -1,10 +1,10 @@
-'use client'
+"use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 
-import { checkApiHealth } from '@/services/api/health'
+import { checkApiHealth } from "@/services/api/health"
 
-export type ApiStatus = 'checking' | 'connected' | 'offline'
+export type ApiStatus = "checking" | "connected" | "offline"
 
 type UseApiStatusOptions = {
   intervalMs?: number
@@ -12,7 +12,7 @@ type UseApiStatusOptions = {
 
 export function useApiStatus(options?: UseApiStatusOptions) {
   const intervalMs = options?.intervalMs ?? 15000
-  const [status, setStatus] = useState<ApiStatus>('checking')
+  const [status, setStatus] = useState<ApiStatus>("checking")
 
   useEffect(() => {
     let mounted = true
@@ -20,7 +20,7 @@ export function useApiStatus(options?: UseApiStatusOptions) {
     async function runCheck() {
       const isHealthy = await checkApiHealth()
       if (!mounted) return
-      setStatus(isHealthy ? 'connected' : 'offline')
+      setStatus(isHealthy ? "connected" : "offline")
     }
 
     runCheck()
