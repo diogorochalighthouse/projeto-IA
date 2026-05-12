@@ -107,7 +107,7 @@ export function ChatSidebar({
                     onSelectConversation(conversation.id)
                     onNavigate?.()
                   }}
-                  className="flex w-full min-w-0 items-center gap-2 px-3 py-2.5 pr-10 text-left"
+                  className="flex w-full min-w-0 cursor-pointer items-center gap-2 px-3 py-2.5 pr-10 text-left"
                 >
                   <span className="truncate text-sm text-zinc-100">{conversation.title}</span>
                 </button>

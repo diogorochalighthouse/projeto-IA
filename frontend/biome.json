@@ -16,7 +16,9 @@
       "components.json",
       "biome.json",
       "package.json",
-      "next.config.ts"
+      "next.config.ts",
+      "vitest.config.ts",
+      "vitest.setup.ts"
     ]
   },
   "formatter": {

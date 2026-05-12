@@ -78,7 +78,7 @@ export function ChatComposer({
               value={input}
               onChange={(e) => onInputChange(e.target.value)}
               placeholder="Pergunte alguma coisa"
-              className="min-w-0 flex-1 border-0 bg-transparent px-0 text-[15px] text-zinc-100 shadow-none placeholder:text-zinc-500 focus-visible:ring-0"
+              className="min-w-0 flex-1 border-0 bg-transparent px-0 text-[15px] text-zinc-100 shadow-none outline-none placeholder:text-zinc-500 focus:border-transparent focus:outline-none focus-visible:border-transparent focus-visible:ring-0"
               disabled={loading}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {

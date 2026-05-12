@@ -32,6 +32,18 @@
   body {
     @apply bg-background text-foreground antialiased;
   }
+
+  /* Evita contorno preto padrão do navegador; foco visível fica no componente (ring). */
+  input:not(:disabled):focus,
+  input:not(:disabled):focus-visible,
+  textarea:not(:disabled):focus,
+  textarea:not(:disabled):focus-visible {
+    outline: none;
+  }
+
+  a[href] {
+    @apply cursor-pointer;
+  }
 }
 
 .custom-scrollbar {

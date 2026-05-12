@@ -42,5 +42,8 @@ jobs:
       - name: TypeScript
         run: npm run typecheck
 
+      - name: Vitest (API client)
+        run: npm run test
+
       - name: Routes + production build
         run: npm run test:routes
