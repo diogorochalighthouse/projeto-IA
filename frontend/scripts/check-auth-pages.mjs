@@ -1,13 +1,13 @@
-import { existsSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { existsSync } from "node:fs"
+import { dirname, resolve } from "node:path"
+import { fileURLToPath } from "node:url"
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..")
 const required = [
-  'src/app/login/page.tsx',
-  'src/app/register/page.tsx',
-  'src/features/auth/actions.ts',
-  'src/features/auth/context.tsx',
+  "src/app/login/page.tsx",
+  "src/app/register/page.tsx",
+  "src/features/auth/actions.ts",
+  "src/features/auth/context.tsx",
 ]
 
 let failed = false
@@ -23,4 +23,4 @@ if (failed) {
   process.exit(1)
 }
 
-console.log('Auth pages and modules present:', required.join(', '))
+console.log("Auth pages and modules present:", required.join(", "))
