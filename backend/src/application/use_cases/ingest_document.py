@@ -25,7 +25,7 @@ def ingest_document_text(
     chunks = splitter.split_text(command.text)
 
     if not chunks:
-        raise InvalidDocumentError("Documento sem conteudo para indexacao.")
+        raise InvalidDocumentError("Documento sem conteúdo para indexação.")
 
     vectors = embeddings.embed_documents(chunks)
     vector_store.add(chunks, vectors)

@@ -11,7 +11,7 @@ os.environ.setdefault(
 
 
 def pytest_sessionstart(session):  # noqa: ARG001
-    """TestClient sem context manager nao dispara lifespan; garante schema SQLite."""
+    """TestClient sem context manager não dispara lifespan; garante schema SQLite."""
     from src.infrastructure.database.models import Base
     from src.infrastructure.database.session import engine
 

@@ -16,7 +16,7 @@ def send_welcome_email(to_email: str) -> str:
     body = (
         "Ola,\n\n"
         f"Sua conta em {settings.APP_NAME} foi criada com sucesso.\n\n"
-        "Se voce nao criou esta conta, ignore esta mensagem.\n"
+        "Se você não criou esta conta, ignore esta mensagem.\n"
     )
 
     if not settings.SMTP_HOST:

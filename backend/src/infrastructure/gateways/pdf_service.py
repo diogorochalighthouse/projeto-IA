@@ -13,13 +13,13 @@ def extract_text_from_pdf(file_bytes: bytes) -> str:
     try:
         reader = PdfReader(BytesIO(file_bytes))
     except (PdfReadError, PdfStreamError) as exc:
-        raise InvalidDocumentError("PDF invalido ou corrompido.") from exc
+        raise InvalidDocumentError("PDF inválido ou corrompido.") from exc
 
     text = ""
     for page in reader.pages:
         text += page.extract_text() or ""
 
     if not text.strip():
-        raise InvalidDocumentError("Nao foi possivel extrair texto do PDF.")
+        raise InvalidDocumentError("Não foi possível extrair texto do PDF.")
 
     return text

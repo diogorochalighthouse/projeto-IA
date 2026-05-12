@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 from fastapi.testclient import TestClient
 
 from src.core.dependencies import (
@@ -8,6 +10,7 @@ from src.core.dependencies import (
     get_vector_store,
 )
 from src.domain.exceptions import InvalidDocumentError
+from src.domain.message import Message
 from src.main import app
 
 
@@ -45,33 +48,26 @@ class FakeVectorStore:
 class FakePdfExtractor:
     def extract(self, file_bytes: bytes) -> str:
         _ = file_bytes
-        return "conteudo pdf fake"
+        return "conteúdo pdf fake"
 
 
 class BrokenPdfExtractor:
     def extract(self, file_bytes: bytes) -> str:
         _ = file_bytes
-        raise InvalidDocumentError("PDF invalido ou corrompido.")
-
-
-class FakeMessage:
-    def __init__(self, role: str, content: str, created_at: str):
-        self.role = role
-        self.content = content
-        self.created_at = created_at
+        raise InvalidDocumentError("PDF inválido ou corrompido.")
 
 
 class FakeMessageHistory:
-    def __init__(self):
-        self.items: list[FakeMessage] = []
+    def __init__(self) -> None:
+        self.items: list[Message] = []
 
-    def add(self, message):
-        self.items.append(FakeMessage(message.role, message.content, "2026-01-01T00:00:00Z"))
+    def add(self, message: Message) -> None:
+        self.items.append(replace(message, created_at="2026-01-01T00:00:00+00:00"))
 
-    def list(self):
+    def list(self) -> list[Message]:
         return self.items
 
-    def clear(self):
+    def clear(self) -> None:
         self.items = []
 
 
@@ -166,9 +162,18 @@ def test_messages_routes_create_list_and_clear():
     app.dependency_overrides[get_message_history] = lambda: fake_history
     client = TestClient(app)
 
-    create = client.post("/messages/", json={"role": "user", "content": "oi"})
+    conv_id = "550e8400-e29b-41d4-a716-446655440000"
+    create = client.post(
+        "/messages/",
+        json={
+            "conversation_id": conv_id,
+            "role": "user",
+            "content": "oi",
+        },
+    )
     assert create.status_code == 201
     assert create.json()["content"] == "oi"
+    assert create.json()["conversation_id"] == conv_id
 
     read = client.get("/messages/")
     assert read.status_code == 200

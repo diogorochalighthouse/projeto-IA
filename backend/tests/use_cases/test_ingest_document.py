@@ -25,7 +25,7 @@ def test_ingest_document_text_indexes_chunks():
     vector_store = FakeVectorStore()
 
     result = ingest_document_text(
-        IngestDocumentCommand(text="conteudo relevante"), embeddings, vector_store
+        IngestDocumentCommand(text="conteúdo relevante"), embeddings, vector_store
     )
 
     assert vector_store.added_texts
@@ -40,6 +40,6 @@ def test_ingest_document_text_rejects_empty_content():
     try:
         ingest_document_text(IngestDocumentCommand(text=""), embeddings, vector_store)
     except InvalidDocumentError as exc:
-        assert "sem conteudo" in str(exc)
+        assert "sem conteúdo" in str(exc)
     else:
         raise AssertionError("InvalidDocumentError era esperado para documento vazio.")

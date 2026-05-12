@@ -6,6 +6,6 @@ from src.domain.exceptions import MissingConfigurationError
 
 def get_embeddings():
     if not settings.OPENAI_API_KEY:
-        raise MissingConfigurationError("OPENAI_API_KEY nao configurada.")
+        raise MissingConfigurationError("OPENAI_API_KEY não configurada.")
 
     return OpenAIEmbeddings(api_key=settings.OPENAI_API_KEY)
